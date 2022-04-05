@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class NettyRpcServer {
 
     // 配置端口号
-    private static final int port = 9898;
+    public static final int port = 9898;
 
     // 使用工厂模式来创建服务器提供器
     private final ServiceProvider serviceProvider = SingletonFactory.getInstance(zkServiceProviderImpl.class); // 工厂模式

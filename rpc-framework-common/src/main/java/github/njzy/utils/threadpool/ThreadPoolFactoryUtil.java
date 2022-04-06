@@ -22,18 +22,18 @@ public class ThreadPoolFactoryUtil {
     /**
      * 如果服务器被弃用，就注册一个服务器
      */
-    public ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix){
+    public static ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix){
         CustomThreadPoolConfig config = new CustomThreadPoolConfig(); // 按照默认的线程池参数来创建服务器
         return createThreadPool(config,threadNamePrefix,false);
     }
 
     // 自己定义了一个线程池，就直接传入参数即可
-    public ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix, CustomThreadPoolConfig config){
+    public static ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix, CustomThreadPoolConfig config){
         return createThreadPool(config,threadNamePrefix,false);
     }
 
     // 自定义，如果
-    public ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix, CustomThreadPoolConfig config, Boolean isDaemon){
+    public static ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix, CustomThreadPoolConfig config, Boolean isDaemon){
         ExecutorService threadPool = map.computeIfAbsent(threadNamePrefix, k -> createThreadPool(config, threadNamePrefix, isDaemon));
                 // 如果当前线程名的服务器已经被关闭了，就要新建一个
                 if(threadPool.isShutdown() || threadPool.isTerminated()){
@@ -47,7 +47,7 @@ public class ThreadPoolFactoryUtil {
     /**
      * 关闭所有的线程池
      */
-    public void shutDownAllThreadPoll(){
+    public static void shutDownAllThreadPoll(){
         log.info("Shutting down all threads");
         map.entrySet().parallelStream().forEach(entry -> {
             ExecutorService service = entry.getValue(); // 服务器

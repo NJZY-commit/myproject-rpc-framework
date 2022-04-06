@@ -2,6 +2,7 @@ package github.njzy.config;
 
 import github.njzy.registry.zk.util.CuratorUtils;
 import github.njzy.remoting.transport.netty.server.NettyRpcServer;
+import github.njzy.utils.threadpool.ThreadPoolFactoryUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -35,10 +36,13 @@ public class CustomShutdownHook {
                 InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), NettyRpcServer.port);
                 // todo: 清除服务器，而能够做到这一个操作的只有Curator客户端框架，所以我要写一个客户端框架工具类，封装一些操作
                 // todo: 由于输入的参数需要client，因此在CuratorUtils中还需自定义一个获取客户端的方法
-                CuratorUtils.clearRegistry();
+                CuratorUtils.clearRegistry(CuratorUtils.getZkClient(), socketAddress);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
+
+            // todo: 关闭线程池
+            ThreadPoolFactoryUtil.shutDownAllThreadPoll();
         }));
     }
 

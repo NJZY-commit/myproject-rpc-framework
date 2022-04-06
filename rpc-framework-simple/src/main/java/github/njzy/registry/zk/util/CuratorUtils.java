@@ -1,14 +1,21 @@
 package github.njzy.registry.zk.util;
 
+import github.njzy.enums.RpcConfigEnum;
+import github.njzy.utils.PropertyFileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.checkerframework.checker.units.qual.K;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  *  Zookeeper提供的一套开源的客户端框架，主要用来进行增删改查的操作
@@ -54,8 +61,32 @@ public class CuratorUtils {
      * 获取zk客户端的方法
      */
     public static CuratorFramework getZkClient() {
-        // todo:通过读取配置文件来创建客户端对象
-        
+        // todo:如果用户在配置文件中已经配置了zk地址，那么就直接读取配置文件中的内容，创建客户端对象
+        // 第一步：先要创建一个读取配置文件的工具类
+        Properties properties = PropertyFileUtil.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
+        String ZookeeperAddress = properties != null && properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) != null ?
+                properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) : DEFAULT_ZOOKEEPER_ADDRESS;
+
+        // todo: 判断ZkClient是否已经启动，如果启动就直接返回，否则就创建一个客户端并启动
+        if (zkClient != null && zkClient.getState() == CuratorFrameworkState.STARTED) return zkClient;
+
+        // todo: 创建一个zookeeper客户端
+        // 先制定重试策略
+        ExponentialBackoffRetry retry = new ExponentialBackoffRetry(BASE_SLEEP_TIME, MAX_RETRIES);
+        // 创建客户端对象，设置两个参数（连接地址和重试策略）
+        zkClient = CuratorFrameworkFactory.builder().connectString(ZookeeperAddress).retryPolicy(retry).build();
+        zkClient.start(); // 启动服务
+
+        // todo: 判断如果zookeeper连接超过30秒还没连接上，就报出异常
+        try {
+            if (!zkClient.blockUntilConnected(30, TimeUnit.SECONDS)){
+                throw new RuntimeException("连接超时，正在等待连接zookeeper");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return zkClient;
     }
 
 

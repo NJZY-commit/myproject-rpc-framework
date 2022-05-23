@@ -29,6 +29,8 @@
         <module>example-obj-api</module>
         <module>myproject-rpc-server</module>
         <module>myproject-rpc-client</module>
+        <module>test-NIO</module>
+        <module>test-rpc-cglib</module>
     </modules>
 
     <!-- 项目的基本属性配置，写在这里是为了统一格式 -->

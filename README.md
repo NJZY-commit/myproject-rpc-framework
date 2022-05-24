@@ -11,8 +11,8 @@ RPC 的全称是 Remote Procedure Call，即远程过程调用。是帮助我们
 
 
 ## 框架介绍
+![框架结构图](https://user-images.githubusercontent.com/72973469/170052473-b5f3fae3-299f-4cbe-907d-008e5e9e6e67.png)
 
-![](D:\面试阶段\面试准备文档\myproject-capture\框架结构图.png)
 
 
 
@@ -42,7 +42,7 @@ RPC 的全称是 Remote Procedure Call，即远程过程调用。是帮助我们
 
 ## 项目模块介绍
 
-![](D:\面试阶段\面试准备文档\myproject-capture\模块介绍.png)
+![模块介绍](https://user-images.githubusercontent.com/72973469/170052421-79e25f02-8ea8-41b6-9aec-41da7e7bc8eb.png)
 
 
 
